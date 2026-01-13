@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飒飒 | 个人博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+            transition: background-color 0.5s;
+        }
+        
+        /* 彩蛋相关样式 */
+        .easter-egg-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            display: none;
+            animation: eggPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes eggPop {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .easter-egg-message h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .easter-egg-message p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close-egg {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .close-egg:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rainbow-text {
+            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 9998;
+            pointer-events: none;
+        }
+        
+        .mouse-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            mix-blend-mode: multiply;
+        }
+        
+        .hidden-egg {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            opacity: 0.01;
+            transition: opacity 0.3s;
+        }
+        
+        .hidden-egg:hover {
+            opacity: 0.1;
+        }
+        
+        .hidden-egg-1 {
+            top: 120px;
+            right: 5%;
+        }
+        
+        .hidden-egg-2 {
+            bottom: 180px;
+            left: 5%;
+        }
+        
+        .special-date-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        
+        .special-date-effect.active {
+            opacity: 0.7;
+        }
+        
+        .fireworks {
+            background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 100%);
+        }
+        
+        /* 原有样式保持不变，这里只显示修改部分 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.5s;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo span {
+            color: #ffde59;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: #ffde59;
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ffde59;
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 主要内容区域 */
+        main {
+            display: flex;
+            margin: 2rem 0;
+            gap: 2rem;
+        }
+        
+        /* 文章区域 */
+        .posts {
+            flex: 3;
+        }
+        
+        .post {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .post-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .post-meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .post-content {
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+        
+        .read-more {
+            display: inline-block;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .read-more:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            flex: 1;
+        }
+        
+        .sidebar-widget {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .widget-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .about-me {
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 5px solid #f0f0f0;
+            transition: all 0.5s;
+        }
+        
+        .avatar:hover {
+            transform: rotate(360deg);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: #6a11cb;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .categories ul, .tags ul {
+            list-style: none;
+        }
+        
+        .categories li, .tags li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .categories a, .tags a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .categories a:hover, .tags a:hover {
+            color: #6a11cb;
+        }
+        
+        .tag-count, .category-count {
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        .tags ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tags li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .tags a {
+            background: #f0f0f0;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        
+        .tags a:hover {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 3rem 0 1.5rem;
+            margin-top: 2rem;
+            position: relative;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-section ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: #6a11cb;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #34495e;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copyright:hover {
+            color: #ffde59;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 1rem 0.5rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 1.5rem;
+                right: 20px;
+            }
+            
+            .mobile-menu {
+                display: none;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .mobile-menu.active {
+                display: block;
+            }
+            
+            .mobile-menu ul {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .mobile-menu ul li {
+                margin: 0.5rem 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .post {
+                padding: 1.5rem;
+            }
+            
+            .post-title {
+                font-size: 1.5rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .post {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .sidebar-widget {
+            animation: fadeIn 0.5s ease-out 0.2s both;
+        }
+    </style>
+</head>
+<body>
+    <!-- 彩蛋消息弹窗 -->
+    <div id="easterEggMessage" class="easter-egg-message">
+        <h2 class="rainbow-text">🎉 恭喜发现彩蛋！ 🎉</h2>
+        <p id="eggMessageText">你找到了隐藏的惊喜！</p>
+        <button class="close-egg" onclick="closeEasterEgg()">太棒了！</button>
+    </div>
+    
+    <!-- 特殊日期效果 -->
+    <div id="specialDateEffect" class="special-date-effect"></div>
+    
+    <!-- 隐藏的彩蛋区域 -->
+    <div class="hidden-egg hidden-egg-1" onclick="triggerHiddenEgg(1)"></div>
+    <div class="hidden-egg hidden-egg-2" onclick="triggerHiddenEgg(2)"></div>
+    
+    <!-- 头部导航 -->
+    <header id="pageHeader">
+        <div class="container header-container">
+            <div class="logo" onclick="logoClickEgg()">飒飒<span>乌托邦</span></div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="desktop-menu">
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#"><i class="fas fa-folder-open"></i> 分类</a></li>
+                    <li><a href="#"><i class="fas fa-tags"></i> 标签</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> 关于</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> 联系</a></li>
+                </ul>
+            </nav>
+            
+            <nav class="mobile-menu" id="mobileMenu">
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#"><i class="fas fa-folder-open"></i> 分类</a></li>
+                    <li><a href="#"><i class="fas fa-tags"></i> 标签</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> 关于</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> 联系</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <main>
+            <!-- 文章列表 -->
+            <section class="posts">
+                <article class="post">
+                    <div class="post-header">
+                        <h2 class="post-title">简约设计之美：如何创建简洁而有效的个人博客</h2>
+                        <div class="post-meta">
+                            <span><i class="far fa-calendar"></i> 2023年10月15日</span>
+                            <span><i class="far fa-folder"></i> 设计思考</span>
+                            <span><i class="far fa-comments"></i> 12 评论</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>在这个信息过载的时代，简约设计不仅是一种美学选择，更是一种用户体验策略。对于个人博客而言，简洁的设计能够帮助读者专注于内容本身，而不是被花哨的装饰分散注意力。</p>
+                        <p>简约设计并不意味着简陋或缺乏创意。相反，它要求设计师更加深思熟虑地选择每一个元素，从配色方案到排版布局，每一处细节都需要精心考量。一个好的简约设计应该像一首优美的诗，每一个词都恰到好处，没有任何冗余。</p>
+                        <!-- 隐藏彩蛋文本，正常情况下不可见 -->
+                        <p style="color: transparent; font-size: 0.8rem; margin-top: 10px;">Psst... 试试在控制台输入"secretCode()"看看会发生什么？</p>
+                    </div>
+                    <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                </article>
+                
+                <article class="post">
+                    <div class="post-header">
+                        <h2 class="post-title">前端技术趋势：2023年值得关注的CSS新特性</h2>
+                        <div class="post-meta">
+                            <span><i class="far fa-calendar"></i> 2023年10月10日</span>
+                            <span><i class="far fa-folder"></i> 前端开发</span>
+                            <span><i class="far fa-comments"></i> 8 评论</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>随着Web技术的不断发展，CSS也在持续进化。2023年，我们看到了一系列令人兴奋的CSS新特性，这些特性正在改变我们构建网站的方式。</p>
+                        <p>从容器查询到级联层，从子网格到accent-color属性，这些新功能让开发者能够更加灵活地创建响应式、可维护的样式。本文将介绍这些新特性，并展示如何在实际项目中使用它们。</p>
+                    </div>
+                    <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                </article>
+                
+                <article class="post">
+                    <div class="post-header">
+                        <h2 class="post-title">数字时代的阅读：纸质书与电子书的平衡之道</h2>
+                        <div class="post-meta">
+                            <span><i class="far fa-calendar"></i> 2023年10月5日</span>
+                            <span><i class="far fa-folder"></i> 生活随笔</span>
+                            <span><i class="far fa-comments"></i> 15 评论</a>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>在数字化的浪潮中，我们的阅读习惯正在发生深刻变化。纸质书与电子书各有其独特的优势，如何在两者之间找到平衡点，成为了许多爱书人思考的问题。</p>
+                        <p>纸质书提供了触觉和嗅觉的体验，是收藏和馈赠的佳品；而电子书则带来了便捷和可访问性，尤其适合旅行和通勤。本文将探讨两种阅读媒介的特点，并分享如何根据不同的阅读场景选择合适的书籍形式。</p>
+                    </div>
+                    <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                </article>
+            </section>
+            
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <!-- 关于我 -->
+                <div class="sidebar-widget about-me">
+                    <h3 class="widget-title">关于我</h3>
+                    <img src="https://cdn.jsdelivr.net/gh/zcm08042/Newphoto/1727887999527.jpg" width="800" alt="博主头像" class="avatar" id="avatar">
+                    <p>你好，我是飒飒。一名大二学生，在这里自己的生活以及维护个人网站。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <!-- 分类 -->
+                <div class="sidebar-widget categories">
+                    <h3 class="widget-title">文章分类</h3>
+                    <ul>
+                        <li><a href="#">技术笔记 <span class="category-count">12</span></a></li>
+                        <li><a href="#">设计思考 <span class="category-count">8</span></a></li>
+                        <li><a href="#">生活随笔 <span class="category-count">15</span></a></li>
+                        <li><a href="#">读书笔记 <span class="category-count">6</span></a></li>
+                        <li><a href="#">旅行见闻 <span class="category-count">9</span></a></li>
+                    </ul>
+                </div>
+                
+                <!-- 标签云 -->
+                <div class="sidebar-widget tags">
+                    <h3 class="widget-title">标签云</h3>
+                    <ul>
+                        <li><a href="#">前端开发</a></li>
+                        <li><a href="#">CSS</a></li>
+                        <li><a href="#">设计</a></li>
+                        <li><a href="#">简约</a></li>
+                        <li><a href="#">响应式</a></li>
+                        <li><a href="#">JavaScript</a></li>
+                        <li><a href="#">生活</a></li>
+                        <li><a href="#">阅读</a></li>
+                    </ul>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于博客</h3>
+                    <p>「静思小筑」是一个专注于分享技术知识与生活感悟的个人博客。在这里，你可以找到前端开发、设计思考、阅读笔记等内容。</p>
+                    <p style="color: transparent; font-size: 0.8rem;">试试双击下面的版权信息？</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul>
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#">文章分类</a></li>
+                        <li><a href="#">标签云</a></li>
+                        <li><a href="#">关于我</a></li>
+                        <li><a href="#">联系</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>联系我</h3>
+                    <p><i class="fas fa-envelope"></i> contact@jingsixiaozhu.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 中国 · 上海</p>
+                </div>
+            </div>
+            
+            <div class="copyright" id="copyright" ondblclick="footerDoubleClickEgg()">
+                <p>&copy; 2023 静思小筑. 保留所有权利 | 设计：林静</p>
+                <p style="font-size: 0.7rem; margin-top: 5px;">彩蛋提示：按住Ctrl键并移动鼠标试试</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+            this.querySelector('i').classList.toggle('fa-bars');
+            this.querySelector('i').classList.toggle('fa-times');
+        });
+        
+        // 点击菜单项后关闭移动菜单
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobileMenu').classList.remove('active');
+                document.getElementById('mobileMenuBtn').querySelector('i').classList.add('fa-bars');
+                document.getElementById('mobileMenuBtn').querySelector('i').classList.remove('fa-times');
+            });
+        });
+        
+        // 文章卡片悬停效果增强
+        document.querySelectorAll('.post').forEach(post => {
+            post.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            post.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // ============ 彩蛋功能代码 ============
+        
+        // 控制台彩蛋
+        console.log("%c 🥚 欢迎来到静思小筑！ 🥚", "font-size: 18px; font-weight: bold; color: #6a11cb;");
+        console.log("%c 你发现了控制台彩蛋！这里有一些有趣的命令可以试试：", "color: #2575fc;");
+        console.log("%c • 输入 secretCode() 看看会发生什么", "color: #4ecdc4;");
+        console.log("%c • 输入 showEasterEgg('你的消息') 显示自定义彩蛋", "color: #4ecdc4;");
+        console.log("%c • 输入 activateRainbowMode() 开启彩虹模式", "color: #4ecdc4;");
+        
+        // 秘密代码功能
+        window.secretCode = function() {
+            showEasterEgg('🎮 你输入了秘密代码！<br>网页正在变成彩虹主题...');
+            activateRainbowMode();
+        };
+        
+        // 显示彩蛋消息
+        window.showEasterEgg = function(message) {
+            document.getElementById('eggMessageText').innerHTML = message;
+            document.getElementById('easterEggMessage').style.display = 'block';
+        };
+        
+        // 关闭彩蛋消息
+        function closeEasterEgg() {
+            document.getElementById('easterEggMessage').style.display = 'none';
+        }
+        
+        // 激活彩虹模式
+        function activateRainbowMode() {
+            const header = document.getElementById('pageHeader');
+            const originalBg = header.style.background;
+            
+            // 创建彩虹渐变动画
+            header.style.background = 'linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3, #54a0ff)';
+            header.style.backgroundSize = '400% 400%';
+            
+            // 动画
+            let pos = 0;
+            const animateRainbow = () => {
+                pos = (pos + 1) % 100;
+                header.style.backgroundPosition = pos + '% ' + pos + '%';
+                requestAnimationFrame(animateRainbow);
+            };
+            animateRainbow();
+            
+            // 10秒后恢复
+            setTimeout(() => {
+                header.style.background = originalBg;
+                header.style.backgroundSize = 'auto';
+                header.style.backgroundPosition = 'initial';
+            }, 10000);
+        }
+        
+        // 点击Logo彩蛋
+        let logoClickCount = 0;
+        function logoClickEgg() {
+            logoClickCount++;
+            
+            if (logoClickCount === 5) {
+                showEasterEgg('🎯 连续点击5次Logo！<br>你获得了"执着探索者"成就！');
+                logoClickCount = 0;
+            }
+        }
+        
+        // 双击页脚彩蛋
+        function footerDoubleClickEgg() {
+            showEasterEgg('👣 你发现了页脚彩蛋！<br>试试在控制台输入"secretCode()"看看？');
+        }
+        
+        // 隐藏彩蛋区域点击
+        function triggerHiddenEgg(eggNumber) {
+            const messages = [
+                '🔍 你找到了隐藏彩蛋 #1！<br>页面右上角的小秘密被你发现了！',
+                '🔍 你找到了隐藏彩蛋 #2！<br>页面左下角也有惊喜！'
+            ];
+            showEasterEgg(messages[eggNumber - 1]);
+            
+            // 创建彩色纸屑效果
+            createConfetti();
+        }
+        
+        // 创建纸屑效果
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#54a0ff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.opacity = '1';
+                
+                document.body.appendChild(confetti);
+                
+                // 动画
+                const duration = Math.random() * 3 + 2;
+                const horizontal = (Math.random() - 0.5) * 200;
+                
+                confetti.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${horizontal}px, 100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+                
+                // 移除元素
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+        }
+        
+        // 特殊日期效果
+        function checkSpecialDate() {
+            const today = new Date();
+            const month = today.getMonth() + 1; // 0-11 → 1-12
+            const date = today.getDate();
+            
+            const effectDiv = document.getElementById('specialDateEffect');
+            
+            // 生日（示例：10月1日）
+            if (month === 10 && date === 1) {
+                effectDiv.classList.add('fireworks');
+                effectDiv.classList.add('active');
+                showEasterEgg('🎂 今天是国庆日！祝你节日快乐！');
+            }
+            
+            // 元旦
+            if (month === 1 && date === 1) {
+                effectDiv.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%)';
+                effectDiv.classList.add('active');
+                showEasterEgg('🎉 新年快乐！愿新的一年充满惊喜！');
+            }
+            
+            // 圣诞节
+            if (month === 12 && date === 25) {
+                effectDiv.style.background = 'radial-gradient(circle, rgba(255,0,0,0.2) 0%, rgba(0,255,0,0.2) 50%, rgba(0,0,255,0.2) 100%)';
+                effectDiv.classList.add('active');
+                showEasterEgg('🎄 圣诞快乐！愿你的日子充满欢乐！');
+            }
+        }
+        
+        // 鼠标轨迹特效
+        let mouseTrailEnabled = false;
+        const mouseTrailColors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#54a0ff'];
+        
+        document.addEventListener('keydown', (e) => {
+            // Ctrl键按下时启用鼠标轨迹
+            if (e.ctrlKey) {
+                mouseTrailEnabled = true;
+                document.body.style.cursor = 'crosshair';
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Control') {
+                mouseTrailEnabled = false;
+                document.body.style.cursor = 'default';
+            }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!mouseTrailEnabled) return;
+            
+            const trail = document.createElement('div');
+            trail.className = 'mouse-trail';
+            trail.style.left = e.clientX - 10 + 'px';
+            trail.style.top = e.clientY - 10 + 'px';
+            trail.style.backgroundColor = mouseTrailColors[Math.floor(Math.random() * mouseTrailColors.length)];
+            
+            document.body.appendChild(trail);
+            
+            // 淡出并移除
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                trail.style.transform = 'scale(2)';
+            }, 100);
+            
+            setTimeout(() => {
+                if (trail.parentNode) {
+                    trail.remove();
+                }
+            }, 1000);
+        });
+        
+        // 初始化检查
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSpecialDate();
+            
+            // 头像旋转彩蛋
+            document.getElementById('avatar').addEventListener('click', function() {
+                this.style.transform = 'rotate(720deg) scale(1.2)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
